@@ -2,6 +2,7 @@ package funsets
 
 import org.junit._
 
+
 /**
  * This class is a test suite for the methods in object FunSets.
  *
@@ -47,7 +48,7 @@ class FunSetSuite {
    * Once you finish your implementation of "singletonSet", remvoe the
    * @Ignore annotation.
    */
-  @Ignore("not ready yet") @Test def `singleton set one contains one`: Unit = {
+  @Test def `singleton set one contains one`: Unit = {
 
     /**
      * We create a new instance of the "TestSets" trait, this gives us access
@@ -72,6 +73,71 @@ class FunSetSuite {
   }
 
 
+  @Test def `intersect contains only same elements of each set`: Unit = {
+    new TestSets {
+      val sA = union(s1, s2)
+      val sB = union(s2, s3)
+      val sI = intersect(sA,sB)
+      assert(contains(sI, 2), "Intersect 1")
+      assert(!contains(sI, 1), "Intersect 2")
+      assert(!contains(sI, 3), "Intersect 3")
+    }
+  }
+
+  @Test def `diff contains only  elements of the first set that are not in second set`: Unit = {
+    new TestSets {
+      val sA = union(s1, s2)
+      val sB = union(sA, s3)
+      val sD = diff(sB, s2)
+      assert(!contains(sD, 2), "Diff 1")
+      assert(contains(sD, 1), "Diff 2")
+      assert(contains(sD, 3), "Diff 3")
+    }
+  }
+
+  @Test def `filter contains the elements of a set that are accepted by a given predicate p`: Unit = {
+    new TestSets {
+      val sA = union(s1, s2)
+      val sB = union(sA, s3)
+      val sF = filter(sB, x => x >= 2)
+      assert(contains(sF, 2), "filter 1")
+      assert(!contains(sF, 1), "filter 2")
+      assert(contains(sF, 3), "filter 3")
+    }
+  }
+
+  @Test def `forall Returns whether all bounded integers within s satisfy p`: Unit = {
+    new TestSets {
+      val sA = union(s1, s2)
+      val sB = union(sA, s3)
+
+      assert(forall(sB, x => x > 0), "forall 1")
+      assert(!forall(sB, x => x > 1), "forall 2")
+
+    }
+  }
+
+    @Test def `exist tests whether a set contains at least one element for which the given predicate is true`: Unit = {
+      new TestSets {
+        val sA = union(s1, s2)
+        val sB = union(sA, s3)
+
+        assert(exists(sB, x => x == 1), "exist 1")
+        assert(!exists(sB, x => x == 4), "exist 2")
+
+      }
+    }
+
+  @Test def `map test`: Unit = {
+    new TestSets {
+
+      val sR = map(s1,x => x + 1)
+
+      assert(!exists(sR, x => x == 1), "not exist 1")
+      assert(exists(sR, x => x == 2), "exist 2")
+
+    }
+  }
 
   @Rule def individualTestTimeout = new org.junit.rules.Timeout(10 * 1000)
 }
